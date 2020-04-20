@@ -1,14 +1,14 @@
 import sys
 import pandas as pd
 import numpy as np
+from sqlalchemy import create_engine
 
 def load_data(messages_filepath, categories_filepath):
     messages = pd.read_csv(messages_filepath)
     categories = pd.read_csv(categories_filepath)
     df = messages.merge(categories, on='id')
     return df
-
-
+    
 def clean_data(df):
     # create a dataframe of the 36 individual category columns
     categories = df['categories'].str.split(";",expand=True)
@@ -18,11 +18,30 @@ def clean_data(df):
         # get the column name out from the first row value
         rename_dict[col]= categories[col].iloc[0].split("-")[0]
     categories = categories.rename(columns=rename_dict)
-
+    
+    for column in categories:
+        # set each value to be the last character of the string
+        categories[column] = categories[column].apply(lambda x: x.split("-")[-1])
+        # convert column from string to numeric
+        categories[column] = categories[column].apply(int)
+    
+    # drop the original categories column from `df`
+    df.drop(labels='categories',axis=1,inplace=True)
+    df.reset_index(drop=True,inplace=True)
+    
+    # concatenate the original dataframe with the new `categories` dataframe
+    assert df.shape[0]==categories.shape[0]
+    df = pd.concat([df,categories],axis=1,sort=False)
+    
+    # Only keep the rows with binary values in categories.
+    df = df.loc[(df[categories.columns].isin([0,1])).all(axis=1)]
+    
+    df.drop_duplicates(keep = 'first', inplace = True)
+    return df
 
 def save_data(df, database_filename):
-    pass  
-
+    engine = create_engine(f'sqlite:///{database_filename}')
+    df.to_sql('categorised_messages', con=engine,index=False,if_exists='replace')  
 
 def main():
     if len(sys.argv) == 4:
