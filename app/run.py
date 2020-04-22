@@ -2,20 +2,16 @@ import json
 import plotly
 import pandas as pd
 
-from nltk.stem import WordNetLemmatizer
-from nltk.tokenize import word_tokenize
 
 from flask import Flask
 from flask import render_template, request, jsonify
 from plotly.graph_objs import Bar
 from sklearn.externals import joblib
 from sqlalchemy import create_engine
-from sklearn.base import BaseEstimator, TransformerMixin
-from sklearn.pipeline import FeatureUnion
 import pickle
 
 import sys
-sys.path.append("/home/workspace/disaster_response/models")
+sys.path.append("../models")
 # Import functions used to create pickle
 from train_classifier import *
 
@@ -26,7 +22,7 @@ engine = create_engine('sqlite:///../data/DisasterResponse.db')
 df = pd.read_sql_table('categorised_messages', engine)
 
 # load model
-model = joblib.load("../models/classifier.pkl")
+model = joblib.load("../classifier.pkl")
 
 # index webpage displays cool visuals and receives user input text for model
 @app.route('/')
@@ -89,7 +85,6 @@ def go():
 
 def main():
     app.run(host='0.0.0.0', port=3001, debug=True)
-
 
 if __name__ == '__main__':
     main()
