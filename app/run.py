@@ -1,21 +1,20 @@
 import json
 import plotly
 import pandas as pd
-
-
 from flask import Flask
 from flask import render_template, request, jsonify
 from plotly.graph_objs import Bar
 from sklearn.externals import joblib
 from sqlalchemy import create_engine
 import pickle
-
 import sys
+
 sys.path.append("../models")
-# Import functions used to create pickle
+# Import functions used to create the classifier model
 from train_classifier import *
 
-app = Flask(__name__)
+# Specify the path with static images
+app = Flask(__name__,static_url_path='/static')
     
 # load data
 engine = create_engine('sqlite:///../data/DisasterResponse.db')
@@ -28,12 +27,13 @@ model = joblib.load("../classifier.pkl")
 @app.route('/')
 @app.route('/index')
 def index():
-    
     # extract data needed for visuals
-    # TODO: Below is an example - modify to extract data for your own visuals
-    genre_counts = df.groupby('genre').count()['message']
-    genre_names = list(genre_counts.index)
-    
+    features = list(df.columns[4:])
+    X = df['message']
+    Y = df[features]
+    cat_counts = Y.sum().sort_values(ascending=True)
+    genre_counts = cat_counts.values
+    genre_names = list(cat_counts.index)
     # create visuals
     # TODO: Below is an example - modify to create your own visuals
     graphs = [

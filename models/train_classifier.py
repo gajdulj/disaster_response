@@ -83,14 +83,14 @@ def build_model():
     pipeline = Pipeline([
         ('features', FeatureUnion([
             ('text_pipeline', Pipeline([
-                ('vect', CountVectorizer(tokenizer=cleaner_tokenizer,ngram_range=(1, 2))),
+                ('vect', CountVectorizer(tokenizer=cleaner_tokenizer,ngram_range=(1, 1))),
                 ('tfidf', TfidfTransformer())
             ])),
 
             ('txt_len', Text_Length())
         ])),
 
-        ('clf', RandomForestClassifier(n_estimators= 500,n_jobs=-1))
+        ('clf', RandomForestClassifier(n_jobs=-1))
     ])
     return pipeline
 
