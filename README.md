@@ -3,7 +3,7 @@
 ## Project purpose:
 The purpose of this project was to gain experience in writing Data Engineering Pipelines, Machine Learning Pipelines and learning the basics of web development.
  
-I have analysed the disaster data from <a href="https://www.figure-eight.com/">Figure Eight</a> and built a multi-label classifier model for an API that classifies disaster messages. The model performs relatively well- <b>avg weighted f1-score:0.941</b>. To further improve the model, I recommend more data cleaning as well as creating word to vec features.
+I have analysed the disaster data from <a href="https://www.figure-eight.com/">Figure Eight</a> and built a multi-label classifier model for an API that classifies disaster messages. The model performs relatively well- <b>avg weighted f1-score:0.94</b>. To further improve the model, I recommend more data cleaning as well as adding word to vec feature embeddings.
 
 ## Project Components:
 
