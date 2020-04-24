@@ -3,17 +3,17 @@
 ## Project purpose:
 The purpose of this project was to gain experience in writing Data Engineering Pipelines, Machine Learning Pipelines and learning the basics of web development.
  
-I have analysed the disaster data from <a href="https://www.figure-eight.com/">Figure Eight</a> and built a multi-label classifier model for an API that classifies disaster messages. The model performs relatively well- Avg weighted f1-score:0.941. To further improve the model, I recommend more data cleaning as well as creating word to vec features.
+I have analysed the disaster data from <a href="https://www.figure-eight.com/">Figure Eight</a> and built a multi-label classifier model for an API that classifies disaster messages. The model performs relatively well- <b>avg weighted f1-score:0.941</b>. To further improve the model, I recommend more data cleaning as well as creating word to vec features.
 
 ## Project Components:
 
-1. ETL Pipeline - process_data.py
+1. <b>ETL Pipeline</b>- process_data.py
 Loads the messages and categories datasets
 Merges the two datasets
 Cleans the data
 Stores it in a SQLite database
 
-2. ML Pipeline
+2. <b>ML Pipeline</b>- train_classifier.py
 Loads data from the SQLite database
 Splits the dataset into training and test sets
 Builds a text processing and machine learning pipeline
@@ -21,11 +21,9 @@ Trains and tunes a model using GridSearchCV
 Outputs results on the test set
 Exports the final model as a pickle file
 
-3. Flask Web App
+3. <b>Flask Web App</b>- run.py
 Classifies inputed message using the pickle model
 Includes interactive visualisation
-
-
 
 ## Project structure:
 <br>
