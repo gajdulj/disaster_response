@@ -80,3 +80,6 @@ json
     `python run.py`
 
 3. Go to http://0.0.0.0:3001/
+
+## Credits:
+Thanks to Udacity and Figure Eight for providing the project idea and data to work with.
