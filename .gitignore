@@ -1,5 +1,5 @@
 .ipynb_checkpoints/
-data/DisasterResponse.db
+data/*.db
 .DS_Store
 *.pkl
 models/__pycache__/train_classifier.cpython-37.pyc

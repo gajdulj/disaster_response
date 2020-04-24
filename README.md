@@ -1,6 +1,70 @@
 # Disaster Response Pipeline Project
 
-### Instructions:
+## Project purpose:
+The purpose of this project was to gain experience in writing Data Engineering Pipelines, Machine Learning Pipelines and learning the basics of web development.
+ 
+I have analysed the disaster data from <a href="https://www.figure-eight.com/">Figure Eight</a> and built a multi-label classifier model for an API that classifies disaster messages. The model performs relatively well- Avg weighted f1-score:0.941. To further improve the model, I recommend more data cleaning as well as creating word to vec features.
+
+## Project Components:
+
+1. ETL Pipeline - process_data.py
+Loads the messages and categories datasets
+Merges the two datasets
+Cleans the data
+Stores it in a SQLite database
+
+2. ML Pipeline
+Loads data from the SQLite database
+Splits the dataset into training and test sets
+Builds a text processing and machine learning pipeline
+Trains and tunes a model using GridSearchCV
+Outputs results on the test set
+Exports the final model as a pickle file
+
+3. Flask Web App
+Classifies inputed message using the pickle model
+Includes interactive visualisation
+
+
+
+## Project structure:
+<br>
+- app
+| - template
+| |- master.html  # main page of web app
+| |- go.html  # classification result page of web app
+| - static # Folder with static data visualisations
+|- run.py  # Flask file that runs app
+
+- data
+|- disaster_categories.csv  # data to process 
+|- disaster_messages.csv  # data to process
+|- process_data.py
+|- DisasterResponse.db   # database to save clean data to
+
+- models
+|- train_classifier.py
+|- classifier.pkl  # saved model 
+
+- README.md
+
+## Requirements:
+python==3.7.6
+Flask==1.1.2
+matplotlib==3.1.3
+numpy==1.18.1
+pandas==1.0.2
+pickleshare==0.7.5
+plotly==4.6.0
+scikit-learn==0.22.1
+SQLAlchemy==1.3.16
+wordcloud==1.6.0
+sys
+re
+json
+
+
+## Instructions:
 1. Run the following commands in the project's root directory to set up your database and model.
 
     - To run ETL pipeline that cleans data and stores in database

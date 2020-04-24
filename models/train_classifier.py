@@ -1,35 +1,40 @@
-import sys
 # ETL
 import pandas as pd
+import numpy as np
 import sqlite3
+import sys
 import re
 
 # NLTK
 import nltk
-nltk.download('stopwords')
-nltk.download(['punkt', 'wordnet'])
 from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
 from nltk.corpus import stopwords
+nltk.download(['stopwords','punkt', 'wordnet'])
+nltk.download('averaged_perceptron_tagger')
 
 # ML
 from sklearn.pipeline import Pipeline
+from sklearn.pipeline import FeatureUnion
 from sklearn.metrics import confusion_matrix
 from sklearn.model_selection import train_test_split
+from sklearn.model_selection import GridSearchCV
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import AdaBoostClassifier
+from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 
 # Multiclass
+import pickle
 import sklearn
 from sklearn.multioutput import MultiOutputClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import classification_report
-from sklearn import metrics
 from sklearn.metrics import f1_score
-import numpy as np
-from sklearn.base import BaseEstimator, TransformerMixin
-from sklearn.pipeline import FeatureUnion
-import pickle
+from sklearn import metrics
+
+# EDA
+import matplotlib.pyplot as plt
 
 def load_data(database_filepath):
     # load data from database
@@ -70,45 +75,74 @@ def cleaner_tokenizer(text,lemmatizer = WordNetLemmatizer()):
     clean_tokens = [t for t in clean_tokens if t not in set(stopwords.words('english'))]
     return clean_tokens
 
-class Text_Length(BaseEstimator, TransformerMixin):
-    """A class that gets a text length from text"""
+class StartingVerbExtractor(BaseEstimator, TransformerMixin):
+    """ A class that uses sentence tokens and parts of speach tagger to extract if the first
+    is a verb in base or present form. The other forms should be handled by lemmatizer.
+    
+        target tags:
+            VB (verb), base form, ex. help
+            VBP (verb), sing. present, ex.help
+    """
+    def starting_verb(self, text):
+        sentence_list = nltk.sent_tokenize(text)
+        for sentence in sentence_list:
+            pos_tags = nltk.pos_tag(cleaner_tokenizer(sentence))
+            try:
+                first_word, first_tag = pos_tags[0]
+                if first_tag in ['VB', 'VBP']:
+                    return 1
+                else:
+                    return 0
+            except: return 0
     def fit(self, X, y=None):
         return self
 
     def transform(self, X):
-        X_tagged = pd.Series(X).apply(lambda x: len(x)).values
+        X_tagged = pd.Series(X).apply(lambda x: self.starting_verb(x)).fillna(0).values
         return pd.DataFrame(X_tagged)
     
 def build_model():
     pipeline = Pipeline([
         ('features', FeatureUnion([
             ('text_pipeline', Pipeline([
-                ('vect', CountVectorizer(tokenizer=cleaner_tokenizer,ngram_range=(1, 1))),
+                ('vect', CountVectorizer(tokenizer=cleaner_tokenizer,max_features=3000)),
                 ('tfidf', TfidfTransformer())
             ])),
+            ('startverb', StartingVerbExtractor())
+            ])),
 
-            ('txt_len', Text_Length())
-        ])),
-
-        ('clf', RandomForestClassifier(n_jobs=-1))
-    ])
+        ('clf', MultiOutputClassifier(AdaBoostClassifier()))
+])
     return pipeline
 
-def evaluate_model(model, X_test, Y_test, category_names,verbose=False):
+def evaluate_model(model, X_test, Y_test,verbose=True):
+    """Function to evaluate the performance of multiclass model.
+
+    Args:
+        model: classifier model
+        X_test: features to predict from
+        Y_test: True values to be predicted
+        
+        verbose: if True: see the performance across each of the categories
+        if False: show only a weighted F1 score.
+    """
     predicted = model.predict(X_test)
     f1_scores = []
     for index, col in enumerate(Y_test.columns):
         if verbose:
-            print(classification_report(Y_test.iloc[:, index], [row[index] for row in predicted]))
+            print(col)
+            print(classification_report(Y_test.iloc[:, index],[row[index] 
+                for row in predicted]))
+            print('---------------------------------------------------')
         score = f1_score(Y_test.iloc[:, index],  
             [row[index] for row in predicted],
             average='weighted')
         f1_scores.append(score)
     avg_f1 = np.mean(f1_scores)
-    print(f'Avg weighted f1-score:{round(avg_f1,2)}')
+    print(f'Avg weighted f1-score:{round(avg_f1,3)}')
 
 def save_model(model, model_filepath):
-    with open('classifier.pkl', 'wb') as file:
+    with open('models/classifier.pkl', 'wb') as file:
         pickle.dump(model, file)
 
 def main():
@@ -125,7 +159,7 @@ def main():
         model.fit(X_train, Y_train)
         
         print('Evaluating model...')
-        evaluate_model(model, X_test, Y_test, category_names)
+        evaluate_model(model, X_test, Y_test)
 
         print('Saving model...\n    MODEL: {}'.format(model_filepath))
         save_model(model, model_filepath)
