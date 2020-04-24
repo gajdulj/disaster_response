@@ -29,6 +29,7 @@ Includes interactive visualisation
 
 ## Project structure:
 <br>
+
 ```
 - app
 | - template
@@ -51,6 +52,7 @@ Includes interactive visualisation
 ```
 
 ## Requirements:
+
 ```
 python==3.7.6
 Flask==1.1.2
