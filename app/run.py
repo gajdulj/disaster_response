@@ -1,6 +1,7 @@
 import json
 import plotly
 import pandas as pd
+import numpy as np
 from flask import Flask
 from flask import render_template, request, jsonify
 from plotly.graph_objs import Bar
@@ -8,6 +9,10 @@ from sklearn.externals import joblib
 from sqlalchemy import create_engine
 import pickle
 import sys
+
+# Import for wrangling data to produce graphs
+sys.path.append("../wrangling")
+import wrangling
 
 sys.path.append("../models")
 # Import functions used to create the classifier model
@@ -27,15 +32,13 @@ model = joblib.load("../models/classifier.pkl")
 @app.route('/')
 @app.route('/index')
 def index():
-    # extract data needed for visuals
-    features = list(df.columns[4:])
-    X = df['message']
-    Y = df[features]
-    cat_counts = Y.sum().sort_values(ascending=True)
-    genre_counts = cat_counts.values
-    genre_names = list(cat_counts.index)
-    # create visuals
-    # TODO: Below is an example - modify to create your own visuals
+
+    #Graph 1
+    genre_counts,genre_names = wrangling.get_category_counts(df)
+
+    #Graph 2
+    average_lengths = wrangling.get_avg_lengths(df,genre_names)
+
     graphs = [
         {
             'data': [
@@ -46,12 +49,33 @@ def index():
             ],
 
             'layout': {
-                'title': 'Distribution of Message Genres',
+                'title': 'Number of messages per category',
                 'yaxis': {
-                    'title': "Count"
+                    'title': "number of messages"
                 },
                 'xaxis': {
                     'title': "Genre"
+                }
+            }
+        },
+
+                {
+            'data': [
+                Bar(
+                    # Sort by average length ascending
+                    x=[name for length, name in sorted(zip(average_lengths,genre_names))],
+                    y=[length for length, name in sorted(zip(average_lengths,genre_names))],
+                )
+            ],
+
+            'layout': {
+                'title': 'Average number of words used in messages per category',
+                'yaxis': {
+                    'title': "number of words",
+                    'range': [0, 70]
+                },
+                'xaxis': {
+                    'title': ""
                 }
             }
         }
