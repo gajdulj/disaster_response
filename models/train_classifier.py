@@ -100,20 +100,43 @@ class StartingVerbExtractor(BaseEstimator, TransformerMixin):
     def transform(self, X):
         X_tagged = pd.Series(X).apply(lambda x: self.starting_verb(x)).fillna(0).values
         return pd.DataFrame(X_tagged)
-    
+
+class TextLen(BaseEstimator, TransformerMixin):
+    """A class that gets a text length from text"""
+    def fit(self, X, y=None):
+        return self
+
+    def transform(self, X):
+        X_tagged = pd.Series(X).apply(lambda x: len(x)).values
+        return pd.DataFrame(X_tagged)
+
 def build_model():
+    """Build model.
+    Returns:
+        pipline: sklearn.model_selection.GridSearchCV. It contains a sklearn estimator.
+    """
+    # Set pipeline
     pipeline = Pipeline([
         ('features', FeatureUnion([
             ('text_pipeline', Pipeline([
                 ('vect', CountVectorizer(tokenizer=cleaner_tokenizer,max_features=3000)),
                 ('tfidf', TfidfTransformer())
             ])),
-            ('startverb', StartingVerbExtractor())
+                ('startverb', StartingVerbExtractor()),
+                ('textlen', TextLen())
             ])),
+        ('clf', MultiOutputClassifier((RandomForestClassifier(n_jobs=-1))))
+    ])
+    # Set parameters for gird search
+    parameters = {
+        'clf__estimator__n_estimators': [100, 200]
+    }
 
-        ('clf', MultiOutputClassifier(AdaBoostClassifier()))
-])
-    return pipeline
+    # Set grid search
+    cv = GridSearchCV(estimator=pipeline, param_grid=parameters, cv=2, 
+        scoring='f1_weighted', verbose=10)
+
+    return cv
 
 def evaluate_model(model, X_test, Y_test,verbose=True):
     """Function to evaluate the performance of multiclass model.
