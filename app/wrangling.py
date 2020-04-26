@@ -2,7 +2,7 @@ import numpy as np
 
 """Graph 1 : message genres"""
 def get_category_counts(df):
-    features = list(df.columns[4:])
+    features = list(df.columns[4:-1])
     X = df['message']
     Y = df[features]
     cat_counts = Y.sum().sort_values(ascending=True)
