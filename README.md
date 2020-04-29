@@ -1,11 +1,11 @@
 # Disaster Response Pipeline Project
 
-* Purpose: gain experience in writing Data Engineering Pipelines, Machine Learning Pipelines and web development with Flask.
-
-* Task: Create a multiclass classifier predicting the emergency categories that a message may belong to.
-
 ## Summary: 
-I have analysed the disaster data from <a href="https://www.figure-eight.com/">Figure Eight</a> and built a multi-label classifier model for an API that classifies disaster messages. The model performs relatively well- <b>avg weighted f1-score:0.94</b>. To further improve the model, I recommend more data cleaning as well as adding word to vec feature embeddings.
+I have analysed the disaster data from <a href="https://www.figure-eight.com/">Figure Eight</a> and built a multi-label classifier model for an API that classifies disaster messages. The model performs relatively well- <b>avg weighted f1-score:0.94</b>. 
+
+* <b>Purpose</b>: gain experience in writing Data Engineering Pipelines, Machine Learning Pipelines and web development with Flask.
+
+* <b>Task</b>: Create a multiclass classifier predicting the emergency categories that a message may belong to.
 
 ## Project Components:
 
@@ -85,6 +85,9 @@ json
     `python run.py`
 
 3. Go to http://0.0.0.0:3001/
+
+## Further recommendations:
+To further improve the model, I recommend more data cleaning as well as adding word to vec feature embeddings. I would also try to reduce the class imbalance and see if it can improve the model performance.
 
 ## Credits:
 Thanks to Udacity and Figure Eight for providing the project idea and data to work with.
