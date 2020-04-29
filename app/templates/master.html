@@ -93,6 +93,30 @@ p.centered {
     <br>
         <img src="/static/wordcloud.png" alt="Wordcloud" >
 
+    <br>
+    <p class="centered">To further drill down to words specific to each of the categories, select a category below.
+    </p>
+
+<div class="myform" style="text-align: center">
+
+<form action="/select" method="get">
+
+<select name= category method="get" action="/select">
+
+    {% for genre in genre_names %}
+    <option value= "{{genre}}" SELECTED>{{genre}}</option>"
+    {% endfor %}
+
+</select>
+
+<input type="submit">
+
+</form>
+
+
+<br><br>
+
+
 <div class="container">
     {% block content %}
         <div class="page-header">

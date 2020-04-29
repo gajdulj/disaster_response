@@ -69,7 +69,7 @@ def index():
             ],
 
             'layout': {
-                'title': 'Average number of words used in messages per category',
+                'title': 'Average number of words used per message in category',
                 'yaxis': {
                     'title': "number of words",
                     'range': [0, 70]
@@ -86,7 +86,7 @@ def index():
     graphJSON = json.dumps(graphs, cls=plotly.utils.PlotlyJSONEncoder)
     
     # render web page with plotly graphs
-    return render_template('master.html', ids=ids, graphJSON=graphJSON)
+    return render_template('master.html', ids=ids, genre_names=genre_names, graphJSON=graphJSON)
 
 # web page that handles user query and displays model results
 @app.route('/go')
@@ -105,6 +105,32 @@ def go():
         classification_result=classification_results
     )
 
+@app.route('/select')
+def select():
+
+    # save user input in query
+    category = request.args.get('category', '') 
+    message = f"user submitted {category}"
+
+    try : # try reading the clean words from a file
+        clean_df = pd.read_csv('clean.csv')
+    except: # if there is no file create one
+        clean_df = wrangling.clean_message_col(df)
+
+    word_list = wrangling.get_catwordlist(clean_df,input_category=category)
+    topn = wrangling.topn_words(word_list=word_list,n=10)
+    data = {'word': list(topn.keys()), 'frequency': list(topn.values())}
+    data = pd.DataFrame.from_dict(data)
+    data=data.to_html(index=False)
+    data=data.replace('<th>','<th style="text-align:center">')
+    data=data.replace('<table','<table align="center"')
+    data=data.replace('<tr>', '<tr align="center">')
+
+    return render_template(
+        'select.html',
+        category=category,
+        topn=data
+    )
 
 def main():
     app.run(host='0.0.0.0', port=3001, debug=True)
