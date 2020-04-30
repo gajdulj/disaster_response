@@ -7,7 +7,7 @@ I have analysed the disaster data from <a href="https://www.figure-eight.com/">F
 
 * <b>Task</b>: Create a multiclass model predicting the emergency categories that a message may belong to.
 
-* <b>Demo</b>: See gifs with web app demo in [demo].
+* <b>Demo</b>: See gifs with web app demo in [demo](graphs.gif).
 
 ## Project Components:
 
