@@ -7,6 +7,8 @@ I have analysed the disaster data from <a href="https://www.figure-eight.com/">F
 
 * <b>Task</b>: Create a multiclass model predicting the emergency categories that a message may belong to.
 
+* <b>Demo</b>: See gifs with web app demo in [demo].
+
 ## Project Components:
 
 1. <b>ETL Pipeline</b>- process_data.py
