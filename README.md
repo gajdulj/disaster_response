@@ -1,11 +1,11 @@
 # Disaster Response Pipeline Project
 
-## Summary: 
-I have analysed the disaster data from <a href="https://www.figure-eight.com/">Figure Eight</a> and built a multi-label classifier model for an API that classifies disaster messages. The model performs relatively well- <b>avg weighted f1-score:0.94</b>. 
+* <b>Summary</b>: 
+I have analysed the disaster data from <a href="https://www.figure-eight.com/">Figure Eight</a> and built a Random Forest model for an API that classifies disaster messages across 36 categories. The model performs relatively well- <b>avg weighted f1-score:0.94</b>. 
 
 * <b>Purpose</b>: gain experience in writing Data Engineering Pipelines, Machine Learning Pipelines and web development with Flask.
 
-* <b>Task</b>: Create a multiclass classifier predicting the emergency categories that a message may belong to.
+* <b>Task</b>: Create a multiclass model predicting the emergency categories that a message may belong to.
 
 ## Project Components:
 
@@ -31,7 +31,6 @@ I have analysed the disaster data from <a href="https://www.figure-eight.com/">F
 * Query specific category for top words
 
 ## Project structure:
-<br>
 
 ```
 - app
